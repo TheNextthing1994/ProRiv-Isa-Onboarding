@@ -321,8 +321,8 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
                         className="w-20 h-20 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform duration-200"
                         style={{
                           backgroundImage: `url(${import.meta.env.BASE_URL}assets/aistudio/image_e475eaa5.png)`,
-                          backgroundSize: 'auto 120%',
-                          backgroundPosition: 'center 29%',
+                          backgroundSize: 'auto 225%',
+                          backgroundPosition: 'center 30%',
                           backgroundRepeat: 'no-repeat'
                         }}
                       />
