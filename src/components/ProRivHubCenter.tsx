@@ -46,12 +46,12 @@ const areas: AreaDescription[] = [
     icon: Monitor,
     accent: 'from-sky-500 to-blue-600',
     badgeDe: 'Dashboard',
-    badgeRu: 'Обзор',
+    badgeRu: 'Дашборд',
     badgeColor: 'bg-sky-50 text-sky-700 border-sky-200',
-    titleDe: 'Projektübersicht',
-    titleRu: 'Обзор проекта',
-    subtitleDe: 'Zentrale Steuerzentrale & Status',
-    subtitleRu: 'Центральная панель и статус',
+    titleDe: 'Dashboard',
+    titleRu: 'Dashboard',
+    subtitleDe: '',
+    subtitleRu: '',
     clientDetailDe: 'Isa sieht aktuelle Testaufgaben, offene Entscheidungen und einen Release-Preview-Link nur dann, wenn er tatsächlich vom Admin eingetragen wurde.',
     clientDetailRu: 'Иса видит задания на тестирование, открытые решения и ссылку на Preview только после её публикации администратором.',
     devDetailDe: 'Entwickler sehen dieselben kundenseitigen Aufgaben und Entscheidungen. Interne Entwicklungsaufgaben bleiben separat.',
@@ -61,13 +61,13 @@ const areas: AreaDescription[] = [
     id: 'chat',
     icon: MessageSquare,
     accent: 'from-cyan-500 to-teal-600',
-    badgeDe: 'Kommunikation',
-    badgeRu: 'Общение',
+    badgeDe: 'Communication',
+    badgeRu: 'Communication',
     badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    titleDe: 'Projekt-Chat',
-    titleRu: 'Чат проекта',
-    subtitleDe: 'Direkter Kanal zwischen Isa & Team',
-    subtitleRu: 'Прямой канал связи с командой',
+    titleDe: 'Communication',
+    titleRu: 'Communication',
+    subtitleDe: '',
+    subtitleRu: '',
     clientDetailDe: 'Isa schreibt eine Nachricht an das Projektteam. Alle berechtigten Teilnehmer sehen die Nachricht in Echtzeit.',
     clientDetailRu: 'Иса пишет сообщение команде проекта. Допущенные участники видят его в реальном времени.',
     devDetailDe: 'Das Entwicklerteam kann im selben Chat antworten. Ein Bug gehört anschließend zur jeweiligen Testaufgabe, damit er nicht im Verlauf verschwindet.',
@@ -82,8 +82,8 @@ const areas: AreaDescription[] = [
     badgeColor: 'bg-violet-50 text-violet-700 border-violet-200',
     titleDe: 'Testaufgaben & Feedback',
     titleRu: 'Задания и отзывы',
-    subtitleDe: 'Strukturiertes Testen der App',
-    subtitleRu: 'Тестирование функций приложения',
+    subtitleDe: '',
+    subtitleRu: '',
     clientDetailDe: 'Wenn eine App-Version später freigegeben ist, öffnet Isa eine konkrete Testaufgabe und schreibt seine Beobachtung direkt dazu. Heute ist noch keine App-Testversion bestätigt.',
     clientDetailRu: 'Когда будет выпущена тестовая версия приложения, Иса откроет задание и оставит отзыв прямо в нём. Сейчас подтверждённой версии пока нет.',
     devDetailDe: 'Entwickler veröffentlichen Testaufgaben, lesen zugeordnetes Feedback und ändern nach Prüfung den Aufgabenstatus. Kein erfundener Release-Link.',
@@ -98,8 +98,8 @@ const areas: AreaDescription[] = [
     badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
     titleDe: 'Entscheidungen',
     titleRu: 'Решения',
-    subtitleDe: 'Gemeinsam fixierte Beschlüsse',
-    subtitleRu: 'Зафиксированные договоренности',
+    subtitleDe: '',
+    subtitleRu: '',
     clientDetailDe: 'Isa oder ein berechtigtes Mitglied seines Teams beantwortet eine offene Fachfrage verbindlich im Hub.',
     clientDetailRu: 'Иса или уполномоченный участник его команды отвечает на открытый вопрос в Hub.',
     devDetailDe: 'Das Entwicklerteam stellt klare fachliche Fragen. Die Kundenantwort bleibt an der Frage dokumentiert.',
@@ -114,8 +114,8 @@ const areas: AreaDescription[] = [
     badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     titleDe: 'Einladung & Zugang',
     titleRu: 'Приглашение и доступ',
-    subtitleDe: 'Passwortloser Login für Isa',
-    subtitleRu: 'Вход без пароля для Исы',
+    subtitleDe: '',
+    subtitleRu: '',
     clientDetailDe: 'Hasin trägt Isas Namen, E-Mail und Kundenrolle im echten Hub ein. Isa erhält einen persönlichen passwortlosen Link, meldet sich selbst an und testet zunächst den Chat.',
     clientDetailRu: 'Хьасин вводит имя, почту и роль заказчика в настоящем Hub. Иса получает личную ссылку без пароля, входит сам и сначала проверяет чат.',
     devDetailDe: 'Nur der berechtigte Hauptadministrator verwaltet Einladungen. Live geprüft ist der Admin-Login; die echte erste Kundeneinladung muss noch abgenommen werden.',
@@ -130,8 +130,8 @@ const areas: AreaDescription[] = [
     badgeColor: 'bg-rose-50 text-rose-800 border-rose-200',
     titleDe: 'Interner Entwicklerbereich',
     titleRu: 'Внутренний раздел',
-    subtitleDe: 'Stunden & Team-Organisation',
-    subtitleRu: 'Учёт времени и задачи',
+    subtitleDe: '',
+    subtitleRu: '',
     clientDetailDe: 'Dieser Bereich ist für Kunden nicht zugänglich. Interne Stunden und Entwicklungsaufgaben sind durch Datenbankregeln geschützt.',
     clientDetailRu: 'Клиенты не имеют доступа к этой области. Время и внутренние задачи защищены правилами базы данных.',
     devDetailDe: 'Hasin, Ismail und Amruddy nutzen hier ihre interne Aufgabenorganisation, Zeiterfassung und Rückfragen; diese Daten werden nicht automatisch an Isa veröffentlicht.',
@@ -237,58 +237,6 @@ export function ProRivHubCenter({ language }: { language: Language }) {
             </button>
           </div>
         </div>
-
-        {/* Responsible Team Strip in Header */}
-        <div className="mt-3.5 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2.5">
-            <span className="text-[#CBD5E1] text-[11px] font-medium">
-              {dual('Zuständiges Projektteam:', 'Ответственная команда:')}
-            </span>
-            <div className="flex items-center -space-x-2 overflow-hidden">
-              <img
-                src="/assets/aistudio/image_fef92dbe.png"
-                alt="Hasin"
-                title="Hasin"
-                className="inline-block h-6 w-6 rounded-full ring-2 ring-[#10141A] object-cover"
-              />
-              <img
-                src="/assets/aistudio/image_14e6391c.png"
-                alt="Ismail"
-                title="Ismail"
-                className="inline-block h-6 w-6 rounded-full ring-2 ring-[#10141A] object-cover"
-              />
-              <div
-                title="Amruddy"
-                className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#3B485A] ring-2 ring-[#10141A] text-[10px] font-bold text-white"
-              >
-                A
-              </div>
-            </div>
-            <span className="text-[11px] text-white font-semibold ml-1">
-              {ru ? 'Хьасин, Исмаил, Амрудди' : bilingual ? 'Hasin, Ismail, Amruddy (Хьасин, Исмаил, Амрудди)' : 'Hasin, Ismail, Amruddy'}
-            </span>
-          </div>
-
-          <div className="text-[11px] text-[#CBD5E1]">
-            {view === 'client' ? (
-              <span className="inline-flex items-center gap-1.5 text-emerald-300">
-                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                {dual(
-                  'Erklärung Kunden-Sicht: Zeigt nur freigegebene Aufgaben und Feedback für Isa',
-                  'Вид заказчика: отображаются только задачи и отзывы для Исы'
-                )}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-[#E8C9A2]">
-                <LockKeyhole className="w-3.5 h-3.5 shrink-0" />
-                {dual(
-                  'Erklärung Entwickler-Sicht: Zeigt zusätzlich den geschützten internen Bereich',
-                  'Вид разработчика: показывает также закрытый внутренний раздел'
-                )}
-              </span>
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Main Content: Guided Stripe-Style Grid + Detail Cockpit */}
@@ -300,12 +248,9 @@ export function ProRivHubCenter({ language }: { language: Language }) {
               <span className="text-xs font-bold uppercase tracking-wider text-[#CBD5E1]">
                 {dual('Funktionen im ProRiv Hub', 'Функции ProRiv Hub')}
               </span>
-              <span className="text-xs text-[#94A3B8] font-medium">
-                {dual('Klick zur Erklärung & Vorschau', 'Нажмите для пояснения')}
-              </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" data-testid="hub-map">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5" data-testid="hub-map">
               {visibleCards.map((item) => {
                 const Icon = item.icon;
                 const isSelected = selected === item.id;
@@ -318,58 +263,32 @@ export function ProRivHubCenter({ language }: { language: Language }) {
                     aria-pressed={isSelected}
                     onClick={() => setSelected(item.id)}
                     className={
-                      'group relative rounded-2xl border text-left p-4 transition-all duration-200 motion-reduce:transition-none flex flex-col justify-between focus-visible:outline-2 focus-visible:outline-white/50 ' +
+                      'group relative rounded-2xl border text-center p-5 transition-all duration-200 motion-reduce:transition-none flex flex-col items-center justify-between focus-visible:outline-2 focus-visible:outline-white/50 ' +
                       (isSelected
                         ? 'bg-[#2A374A]/95 border-white/60 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.45),0_12px_28px_rgba(0,0,0,0.35)] ring-2 ring-white/30 translate-y-[-2px] text-white'
                         : 'bg-[#161F2C]/75 border-white/[0.14] hover:border-white/35 hover:bg-[#202B3B]/85 text-[#E2E8F0]')
                     }
                   >
-                    <div>
-                      {/* Top row: Icon + Badge */}
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <div
-                          className={
-                            'w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 motion-reduce:transform-none border ' +
-                            (isSelected
-                              ? 'bg-[#F1F0EE] text-[#10141A] shadow-md border-transparent'
-                              : 'bg-white/10 text-white border-white/15 group-hover:bg-white/15')
-                          }
-                        >
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span
-                          className={
-                            'text-[10px] font-bold px-2 py-0.5 rounded-full border ' +
-                            (isSelected
-                              ? 'bg-[#F1F0EE] text-[#10141A] font-extrabold border-white/60 shadow-xs'
-                              : 'bg-[#202B3A] text-[#CBD5E1] border-white/10')
-                          }
-                        >
-                          {dual(item.badgeDe, item.badgeRu)}
-                        </span>
+                    <div className="flex flex-col items-center justify-center my-auto py-1">
+                      <div
+                        className={
+                          'w-11 h-11 rounded-2xl flex items-center justify-center mb-3 transition-transform group-hover:scale-105 motion-reduce:transform-none border ' +
+                          (isSelected
+                            ? 'bg-[#F1F0EE] text-[#10141A] shadow-md border-transparent'
+                            : 'bg-white/10 text-white border-white/15 group-hover:bg-white/15')
+                        }
+                      >
+                        <Icon className="w-5 h-5" />
                       </div>
-
-                      {/* Title & Subtitle */}
-                      <h4 className={'font-bold text-sm transition-colors ' + (isSelected ? 'text-white' : 'text-[#F1F5F9] group-hover:text-white')}>
+                      <h4 className={'font-bold text-sm sm:text-base tracking-tight transition-colors ' + (isSelected ? 'text-white' : 'text-[#F1F5F9] group-hover:text-white')}>
                         {dual(item.titleDe, item.titleRu)}
                       </h4>
-                      <p className={'text-xs mt-1 line-clamp-2 leading-relaxed ' + (isSelected ? 'text-slate-200' : 'text-[#94A3B8]')}>
-                        {dual(item.subtitleDe, item.subtitleRu)}
-                      </p>
                     </div>
 
-                    {/* Bottom Indicator */}
-                    <div className={'mt-3 pt-2 border-t flex items-center justify-between text-[11px] font-medium transition-colors ' +
+                    <div className={'w-full mt-4 pt-2.5 border-t flex items-center justify-between text-[11px] font-medium transition-colors ' +
                       (isSelected ? 'border-white/20 text-white font-bold' : 'border-white/10 text-[#CBD5E1] group-hover:text-white')}>
                       <span>{isSelected ? dual('Ausgewählt', 'Выбрано') : dual('Details & Ablauf', 'Пояснение')}</span>
-                      <ArrowRight
-                        className={
-                          'w-3.5 h-3.5 transition-transform motion-reduce:transform-none ' +
-                          (isSelected
-                            ? 'text-white translate-x-1'
-                            : 'group-hover:translate-x-1')
-                        }
-                      />
+                      <ArrowRight className={'w-3.5 h-3.5 transition-transform motion-reduce:transform-none ' + (isSelected ? 'text-white translate-x-1' : 'group-hover:translate-x-1')} />
                     </div>
                   </button>
                 );
