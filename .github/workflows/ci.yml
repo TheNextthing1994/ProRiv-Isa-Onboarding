@@ -17,3 +17,16 @@ jobs:
         run: npm run build
       - name: Verify presentation output
         run: test -f dist/presentation.html
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test presentation in browser
+        run: npm run test:e2e
+      - name: Save browser test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: onboarding-ui-test-results
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
