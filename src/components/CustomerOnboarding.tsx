@@ -24,6 +24,7 @@ interface Props {
   onLanguageChange: (lang: Language) => void;
   onExit: () => void;
   onOpenSenior: () => void;
+  standalone?: boolean;
 }
 type SaveState = 'loading'|'ready'|'saving'|'saved'|'error';
 const evidenceClass = {
@@ -41,7 +42,7 @@ function download(name:string,content:string,type:string) {
   document.body.appendChild(anchor);anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,onExit,onOpenSenior}) => {
+export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,onExit,onOpenSenior,standalone=false}) => {
   const [stationIndex,setStationIndex]=useState(0);
   const [state,setState]=useState<CustomerOnboardingState>(emptyOnboarding);
   const [saveState,setSaveState]=useState<SaveState>('loading');
@@ -125,7 +126,7 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
       const stamp='2026-10-31';
       if(kind==='md') download('ProRiv_Isa_Onboarding_'+stamp+'.md',onboardingMarkdown(state,lang),'text/markdown;charset=utf-8');
       if(kind==='json') download('ProRiv_Isa_Onboarding_'+stamp+'.json',JSON.stringify(state,null,2),'application/json');
-      if(kind==='all') download('ProRiv_Eventstorming_Backup_'+stamp+'.json',await exportStateAsJson(),'application/json');
+      if(kind==='all') download('ProRiv_Isa_Onboarding_Backup_'+stamp+'.json',await exportStateAsJson(),'application/json');
       setSaveState('saved');
     } catch(err){
       console.error('Onboarding export failure',err);
@@ -206,15 +207,15 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
             {saveState==='saving'?<Save size={16}/>:saveState==='error'?<ShieldAlert size={16}/>:<CheckCircle2 size={16}/>}
             <span className="pr-footer-label">{saveState==='loading'?t('Lade Daten','Загрузка'):saveState==='saving'?t('Speichert lokal','Сохранение'):saveState==='saved'?t('Lokal gesichert','Сохранено локально'):saveState==='error'?t('Speicherfehler','Ошибка сохранения'):t('Notizen lokal','Локальные заметки')}</span>
           </p>
-          <button className="pr-present-secondary text-left" type="button" title={t('Senior-Präsentation','Презентация сеньора')} onClick={()=>void leaveSafely(onOpenSenior)}>
+          {!standalone && <button className="pr-present-secondary text-left" type="button" title={t('Senior-Präsentation','Презентация сеньора')} onClick={()=>void leaveSafely(onOpenSenior)}>
             <BookOpenCheck size={16}/><span className="pr-footer-label">{t('Senior-Präsentation','Презентация сеньора')}</span>
-          </button>
+          </button>}
           <button className="pr-present-secondary text-left" type="button" title={t('Protokoll sichern','Скачать протокол')} onClick={()=>void exportFile('md')} disabled={saveState==='loading'}>
             <Download size={16}/><span className="pr-footer-label">{t('Protokoll sichern','Скачать протокол')}</span>
           </button>
-          <button className="pr-present-secondary text-left" type="button" title={t('Präsentation verlassen','Выйти из презентации')} onClick={()=>void leaveSafely(onExit)}>
+          {!standalone && <button className="pr-present-secondary text-left" type="button" title={t('Präsentation verlassen','Выйти из презентации')} onClick={()=>void leaveSafely(onExit)}>
             <ArrowLeft size={16}/><span className="pr-footer-label">{t('Präsentation verlassen','Выйти из презентации')}</span>
-          </button>
+          </button>}
         </div>
       </aside>
         <main className="pr-present-main">
