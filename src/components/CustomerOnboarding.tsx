@@ -315,10 +315,16 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
                   {/* Ismail */}
                   <div className="flex flex-col items-center text-center p-4 rounded-2xl bg-[#202938]/90 border border-white/[0.18] shadow-md hover:border-white/45 transition-all duration-200 group">
                     <div className="relative mb-3">
-                      <img
-                        src="/assets/aistudio/image_14e6391c.png"
-                        alt={t('Ismail', 'Исмаил')}
-                        className="w-20 h-20 rounded-full object-cover border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform duration-200"
+                      <div
+                        role="img"
+                        aria-label={t('Ismail', 'Исмаил')}
+                        className="w-20 h-20 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform duration-200"
+                        style={{
+                          backgroundImage: `url(${import.meta.env.BASE_URL}assets/aistudio/image_e475eaa5.png)`,
+                          backgroundSize: 'auto 120%',
+                          backgroundPosition: 'center 29%',
+                          backgroundRepeat: 'no-repeat'
+                        }}
                       />
                       <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-[#10141A] flex items-center justify-center shadow-xs" title={t('Aktiv im Projekt', 'Активен в проекте')}>
                         <span className="w-1.5 h-1.5 rounded-full bg-white" />
