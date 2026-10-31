@@ -34,9 +34,11 @@ const ask = (id:string,de:string,ru:string,hint?:Translated):OnboardingQuestion 
 export const ACCOUNT_TYPES = [
   {id:'github',name:'GitHub',reason:tr('Code, Zugriffsrechte und Repository-Zuständigkeit','Код, права доступа и ответственность за репозиторий')},
   {id:'aws',name:'AWS',reason:tr('Cloud-Betrieb und Kostenverantwortung','Облачная инфраструктура и ответственность за расходы')},
+  {id:'domain',name:'Domain & E-Mail',reason:tr('Domain-Inhaberschaft, DNS-Verwaltung, SPF/DKIM und E-Mail-Postfächer für System-, Einladungs- und Rapport-Nachrichten','Владение доменом, DNS-записи, SPF/DKIM и почтовые ящики для системных писем, приглашений и рапортов')},
+  {id:'tripletex',name:'Tripletex',reason:tr('ERP-, Zeiterfassungs- und Buchhaltungszugang für Kunden-, Projekt- und Stundenabgleich sowie spätere Rechnungsübergabe','Доступ к ERP и бухгалтерии для синхронизации клиентов, проектов, часов и последующей передачи счетов')},
   {id:'apple',name:'Apple Developer',reason:tr('iOS-Signierung, TestFlight und spätere Veröffentlichung','Подпись iOS, TestFlight и будущая публикация')},
   {id:'google',name:'Google Play Console',reason:tr('Android-Testverteilung und spätere Veröffentlichung','Тестирование Android и будущая публикация')},
-  {id:'ai',name:'OpenAI / KI-Anbieter',reason:tr('Spätere JEV/Luna-E-Mail-Auswertung: Rapportantwort eindeutig zuordnen und Zustimmung, Ablehnung oder Unklarheit erkennen – keine automatische Freigabe bei Zweifeln','Будущий анализ почты JEV/Luna: связать ответ с рапортом и определить согласие, отказ или неопределённость; при сомнении не считать одобрением')}
+  {id:'ai',name:'OpenAI',reason:tr('Spätere JEV/Luna-E-Mail-Auswertung: Rapportantwort eindeutig zuordnen und Zustimmung, Ablehnung oder Unklarheit erkennen – keine automatische Freigabe bei Zweifeln','Будущий анализ почты JEV/Luna: связать ответ с рапортом и определить согласие, отказ или неопределённость; при сомнении не считать одобрением')}
 ] as const;
 export type AccountId = typeof ACCOUNT_TYPES[number]['id'];
 
@@ -70,9 +72,10 @@ export const ONBOARDING_STATIONS: OnboardingStation[] = [
     ]
   },
   {
-    id:'hub',title:tr('ProRiv Hub & Zusammenarbeit','ProRiv Hub и взаимодействие'),
-    purpose:tr('Mit den beteiligten Personen den gemeinsamen Projektbereich kennenlernen und den echten Zugang ausprobieren','Познакомиться с общей проектной средой, участниками и попробовать настоящий вход'),
+    id:'hub',title:tr('Kommunikation & Zusammenarbeit','Коммуникация и сотрудничество'),
+    purpose:tr('Telegram als erster Kanal für den schnellen Austausch; ProRiv Hub für erweiterte Rollen, Aufgaben und Web-Zugang','Telegram как основной канал для быстрой связи; ProRiv Hub для ролей, задач и веб-доступа'),
     points:[
+      plan('telegramPrimary','Telegram ist unser erster und direkter Kanal für schnelle Abstimmungen, Fragen, Sprachnachrichten und Status-Updates.','Telegram — наш основной и прямой канал для оперативных согласований, вопросов, голосовых сообщений и обновлений.'),
       plan('communication','Der Hub bietet Projektübersicht, gemeinsamen Chat, Testaufgaben mit zugeordnetem Feedback und Entscheidungen. Das Entwicklerteam arbeitet zusätzlich in einem geschützten internen Bereich.','В Hub есть обзор проекта, общий чат, тестовые задачи с отзывами и решения. Для разработчиков имеется отдельная защищённая внутренняя область.'),
       plan('button','„App testen“ im Hub soll zur separaten, freigegebenen Release-Preview-Umgebung führen.','Кнопка «Тестировать приложение» в Hub должна открывать отдельную разрешённую среду Release Preview.'),
       plan('security','Die interne Zeiterfassung der Entwickler bleibt ein geschützter, für Isa nicht zugänglicher Bereich.','Внутренний учёт рабочего времени разработчиков остаётся закрытым для Исы.'),
