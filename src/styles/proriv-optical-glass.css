@@ -1,0 +1,245 @@
+/*
+ * ProRiv optical glass, customer onboarding only.
+ * Visual design: irregularly illuminated glass edges, localized warm light,
+ * luminous selection (not uniform neon borders), and calm frosted surfaces.
+ * Loaded after proriv-presentation.css; no layout/UX changes.
+ */
+.pr-onboarding {
+  --pr-rim-silver: rgba(234, 241, 252, .52);
+  --pr-rim-gold: rgba(249, 212, 150, .83);
+  --pr-fog: rgba(222, 233, 249, .10);
+}
+
+/* Keep the image composition. Increase mountain edge contrast without blurring
+   the exposed upper-right scene; the blur belongs on the glass, not the photo. */
+.pr-onboarding > [aria-hidden="true"] > img {
+  filter: contrast(1.13) saturate(1.06) brightness(1.035);
+  object-position: center 42%;
+}
+
+/* Independent semi-transparent panes; no large opaque navy blocks. */
+.pr-onboarding .pr-present-sidebar,
+.pr-onboarding .pr-process-main,
+.pr-onboarding .pr-process-agreements,
+.pr-onboarding .pr-other-section {
+  position: relative;
+  isolation: isolate;
+  border-color: rgba(187, 206, 231, .15);
+  background:
+    radial-gradient(ellipse 95% 80% at 2% 0%, rgba(238, 227, 208, .12), transparent 63%),
+    radial-gradient(ellipse 100% 78% at 100% 95%, rgba(171, 202, 237, .075), transparent 65%),
+    linear-gradient(138deg, rgba(30, 44, 65, .70), rgba(13, 25, 44, .64) 55%, rgba(22, 33, 52, .63));
+  -webkit-backdrop-filter: blur(25px) saturate(145%);
+  backdrop-filter: blur(25px) saturate(145%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .23),
+    inset 1px 0 0 rgba(243, 229, 206, .08),
+    inset 0 -1px 0 rgba(194, 210, 234, .055),
+    0 15px 38px rgba(0, 0, 0, .23);
+}
+
+/* Asymmetrical, angle-dependent glass rim: some corners brighten, other
+   segments nearly disappear. This is a thin optical line, NOT a solid outline. */
+.pr-onboarding .pr-present-sidebar::before,
+.pr-onboarding .pr-process-main::before,
+.pr-onboarding .pr-process-agreements::before,
+.pr-onboarding .pr-other-section::before,
+.pr-onboarding .pr-process-step::before,
+.pr-onboarding .pr-process-detail::before,
+.pr-onboarding .pr-agreement::before,
+.pr-onboarding .pr-present-nav button[aria-current="step"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: 2;
+  background: conic-gradient(
+    from 220deg,
+    rgba(201, 218, 239, .065) 0deg,
+    rgba(235, 206, 154, .21) 42deg,
+    rgba(253, 241, 211, .68) 92deg,
+    rgba(210, 230, 253, .20) 125deg,
+    rgba(212, 229, 249, .045) 193deg,
+    rgba(193, 217, 241, .095) 235deg,
+    rgba(241, 199, 131, .35) 300deg,
+    rgba(246, 230, 203, .12) 334deg,
+    rgba(201, 218, 239, .065) 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Secondary scattered reflection, with an optical hotspot rather than an
+   equally bright border all around. Keep content readable and interactive. */
+.pr-onboarding .pr-process-main::after,
+.pr-onboarding .pr-process-agreements::after,
+.pr-onboarding .pr-other-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 53% 27% at 2% -4%, rgba(251, 230, 191, .11), transparent 75%),
+    radial-gradient(ellipse 45% 42% at 105% 88%, rgba(220, 231, 252, .055), transparent 74%);
+}
+.pr-onboarding .pr-process-main > *,
+.pr-onboarding .pr-process-agreements > *,
+.pr-onboarding .pr-other-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Refracted inner glass layers reveal a little more environment and give
+   the cards local highlights without a uniform opaque blue fill. */
+.pr-onboarding .pr-process-step,
+.pr-onboarding .pr-process-detail,
+.pr-onboarding .pr-agreement {
+  position: relative;
+  isolation: isolate;
+  border-color: rgba(181, 201, 226, .19);
+  background:
+    radial-gradient(ellipse 92% 74% at 0% 0%, rgba(235, 240, 248, .09), transparent 70%),
+    linear-gradient(145deg, rgba(22, 38, 59, .60), rgba(11, 24, 43, .67));
+  -webkit-backdrop-filter: blur(17px) saturate(132%);
+  backdrop-filter: blur(17px) saturate(132%);
+  box-shadow:
+    inset 0 1px 0 rgba(247, 250, 255, .13),
+    inset 1px 0 0 rgba(238, 242, 249, .06),
+    0 8px 22px rgba(1, 8, 21, .13);
+  transition:
+    background-color .24s ease,
+    border-color .24s ease,
+    box-shadow .32s ease,
+    transform .24s ease;
+}
+
+.pr-onboarding .pr-process-detail {
+  border-color: rgba(183, 206, 234, .22);
+  background:
+    radial-gradient(ellipse 115% 85% at 0% 0%, rgba(237, 242, 255, .10), transparent 55%),
+    linear-gradient(120deg, rgba(27, 44, 65, .61), rgba(12, 27, 47, .59));
+}
+
+/* Selection: a modest but visible gold bloom biased toward the right and
+   top-left corners. The irregular rim changes intensity on selection. */
+.pr-onboarding .pr-process-step[aria-pressed="true"],
+.pr-onboarding .pr-process-step--active {
+  border-color: rgba(236, 200, 134, .38);
+  background:
+    radial-gradient(ellipse 115% 80% at 100% 0%, rgba(245, 215, 162, .14), transparent 67%),
+    linear-gradient(133deg, rgba(78, 77, 75, .46), rgba(31, 46, 67, .69));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 243, 214, .36),
+    inset -1px 0 0 rgba(248, 209, 142, .18),
+    0 0 0 1px rgba(233, 192, 123, .10),
+    9px -7px 31px rgba(245, 189, 97, .19),
+    -5px 8px 22px rgba(241, 198, 131, .065),
+    0 0 15px rgba(240, 187, 101, .11);
+}
+
+.pr-onboarding .pr-process-step[aria-pressed="true"]::before {
+  background: conic-gradient(
+    from 222deg,
+    rgba(250, 215, 158, .07) 0deg,
+    rgba(255, 229, 178, .36) 39deg,
+    rgba(255, 239, 196, .98) 91deg,
+    rgba(255, 220, 166, .60) 119deg,
+    rgba(241, 205, 150, .13) 180deg,
+    rgba(239, 200, 136, .12) 238deg,
+    rgba(255, 225, 171, .80) 301deg,
+    rgba(253, 222, 173, .12) 350deg,
+    rgba(250, 215, 158, .07) 360deg
+  );
+}
+
+.pr-onboarding .pr-process-step:hover:not([aria-pressed="true"]),
+.pr-onboarding .pr-agreement:hover {
+  border-color: rgba(226, 200, 154, .31);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    4px -3px 22px rgba(234, 190, 115, .10),
+    0 12px 22px rgba(0, 0, 0, .16);
+}
+
+/* Editing a question is an active state, too. */
+.pr-onboarding .pr-agreement--editing {
+  border-color: rgba(239, 203, 142, .47);
+  background:
+    radial-gradient(ellipse 93% 65% at 12% 0%, rgba(248, 221, 175, .13), transparent 74%),
+    linear-gradient(135deg, rgba(37, 50, 65, .65), rgba(12, 27, 46, .77));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 239, 209, .26),
+    -4px -3px 22px rgba(229, 181, 108, .10),
+    8px 8px 25px rgba(0, 0, 0, .16);
+}
+.pr-onboarding .pr-agreement--editing::before {
+  background: conic-gradient(
+    from 216deg,
+    rgba(240, 200, 138, .07),
+    rgba(255, 236, 193, .84) 95deg,
+    rgba(221, 234, 251, .09) 190deg,
+    rgba(241, 198, 138, .52) 295deg,
+    rgba(240, 200, 138, .07)
+  );
+}
+
+/* The selected left-side navigation is a softly lit piece of frosted glass,
+   not a uniform yellow rectangle or hard neon frame. */
+.pr-onboarding .pr-present-nav button[aria-current="step"] {
+  position: relative;
+  isolation: isolate;
+  border-color: rgba(245, 217, 165, .24);
+  background:
+    radial-gradient(ellipse 58% 90% at 97% 45%, rgba(247, 197, 115, .19), transparent 92%),
+    linear-gradient(102deg, rgba(83, 80, 76, .30), rgba(44, 55, 74, .54));
+  -webkit-backdrop-filter: blur(17px) saturate(137%);
+  backdrop-filter: blur(17px) saturate(137%);
+  box-shadow:
+    inset -3px 0 0 rgba(253, 208, 129, .73),
+    inset 0 1px 0 rgba(255, 246, 225, .16),
+    9px -3px 21px rgba(233, 180, 92, .14);
+}
+.pr-onboarding .pr-present-nav button[aria-current="step"]::before {
+  background: conic-gradient(
+    from 212deg,
+    rgba(233, 205, 146, .07),
+    rgba(250, 226, 179, .40) 55deg,
+    rgba(255, 238, 197, .82) 110deg,
+    rgba(210, 227, 249, .07) 195deg,
+    rgba(255, 222, 152, .74) 294deg,
+    rgba(233, 205, 146, .07)
+  );
+}
+
+/* The onboarding-only sidebar stays sufficiently dark for contrast. */
+.pr-onboarding .pr-present-sidebar {
+  background:
+    radial-gradient(ellipse 105% 42% at 0% 0%, rgba(215, 229, 249, .095), transparent 72%),
+    linear-gradient(155deg, rgba(16, 29, 49, .86), rgba(11, 23, 41, .78));
+  border-right-color: rgba(219, 229, 247, .16);
+  -webkit-backdrop-filter: blur(23px) saturate(130%);
+  backdrop-filter: blur(23px) saturate(130%);
+}
+
+/* Browsers with no backdrop-filter must keep solid readable cards. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .pr-onboarding .pr-process-main,
+  .pr-onboarding .pr-process-agreements,
+  .pr-onboarding .pr-process-detail,
+  .pr-onboarding .pr-process-step,
+  .pr-onboarding .pr-agreement {
+    background-color: rgba(14, 25, 43, .94);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pr-onboarding .pr-process-step,
+  .pr-onboarding .pr-agreement {
+    transition: none !important;
+  }
+}
