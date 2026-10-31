@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft, ArrowRight, BookOpenCheck, CalendarDays, Check, CheckCircle2,
   ChevronDown, ChevronRight, ClipboardCheck, CloudDownload, Download, ExternalLink,
-  FileJson, FileText, FolderLock, GitBranch, MessageSquare, Save,
+  FileJson, FileText, FolderLock, GitBranch, LayoutGrid, MessageSquare, PanelLeftClose, PanelLeftOpen, Save,
   ShieldAlert, User, UsersRound
 } from 'lucide-react';
 import { Language, WorkshopNotes } from '../types';
@@ -17,13 +17,13 @@ import { ProRivProjectRoadmapPremium } from './ProRivProjectRoadmapPremium';
 import '../styles/proriv-presentation.css';
 import '../styles/proriv-optical-glass.css';
 import { ProRivHubCenter } from './ProRivHubCenter';
+import { TelegramProjectChannel } from './TelegramProjectChannel';
 
 interface Props {
   language: Language;
   onLanguageChange: (lang: Language) => void;
   onExit: () => void;
   onOpenSenior: () => void;
-  standalone?: boolean;
 }
 type SaveState = 'loading'|'ready'|'saving'|'saved'|'error';
 const evidenceClass = {
@@ -41,13 +41,14 @@ function download(name:string,content:string,type:string) {
   document.body.appendChild(anchor);anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,onExit,onOpenSenior,standalone=false}) => {
+export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,onExit,onOpenSenior}) => {
   const [stationIndex,setStationIndex]=useState(0);
   const [state,setState]=useState<CustomerOnboardingState>(emptyOnboarding);
   const [saveState,setSaveState]=useState<SaveState>('loading');
   const [loadFailure,setLoadFailure]=useState(false);
   const [workshopNotes,setWorkshopNotes]=useState<WorkshopNotes>({});
   const [downloadError,setDownloadError]=useState('');
+  const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
   const bilingual=language==='bilingual';
   const lang = language==='ru' ? 'ru':'de';
   const t=(de:string,ru:string)=>language==='ru'?ru:de;
@@ -163,16 +164,33 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
       <img src="/assets/proriv_mountain_background_16x9.webp" alt="" className="w-full h-full object-cover object-center"/>
       <div className="absolute inset-0 bg-gradient-to-r from-[#0e1725]/18 via-transparent to-[#0d1522]/8"/>
     </div>
-    <div className="pr-present-shell">
-      <aside className="pr-present-sidebar" aria-label={t('Stationen','Этапы')}>
-        <div className="pr-logo" aria-label="ProRiv">
-          <span className="pr-logo-mark" aria-hidden="true">≋</span>
-          <div><strong>ProRiv</strong><small>{t('ISA · PROJEKT','ПРОЕКТ ИСЫ')}</small></div>
+    <div className={'pr-present-shell ' + (sidebarCollapsed ? 'pr-present-shell--collapsed' : '')}>
+      <aside className={'pr-present-sidebar ' + (sidebarCollapsed ? 'pr-present-sidebar--collapsed' : '')} aria-label={t('Stationen','Этапы')}>
+        <div className="flex items-center justify-between gap-2 w-full pb-3 border-b border-white/10 pr-logo-row">
+          <div className="pr-logo" aria-label="ProRiv">
+            {!sidebarCollapsed ? (
+              <div><strong>ProRiv</strong><small>{t('ISA · PROJEKT','ПРОЕКТ ИСЫ')}</small></div>
+            ) : (
+              <div className="font-bold text-base text-[#e3bb6b] tracking-wider px-1">PR</div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-[#e3bb6b] transition-all flex items-center justify-center shrink-0 focus-visible:outline-2 focus-visible:outline-white/50"
+            title={sidebarCollapsed ? t('Sidebar ausklappen', 'Развернуть панель') : t('Sidebar einklappen', 'Свернуть панель')}
+            aria-label={sidebarCollapsed ? t('Sidebar ausklappen', 'Развернуть панель') : t('Sidebar einklappen', 'Свернуть панель')}
+            aria-expanded={!sidebarCollapsed}
+            data-testid="toggle-sidebar"
+          >
+            {sidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+          </button>
         </div>
         <nav className="pr-present-nav" aria-label={t('Stationen','Этапы')}>
           {ONBOARDING_STATIONS.map((item,i)=>{
             const Icon=item.id==='project'?CalendarDays:item.id==='hub'?MessageSquare:item.id==='accounts'?FolderLock:CheckCircle2;
             return <button type="button" key={item.id} data-testid={'station-nav-'+item.id} aria-current={stationIndex===i?'step':undefined}
+              title={sidebarCollapsed ? item.title[lang] : undefined}
               onClick={()=>{setStationIndex(i);window.scrollTo({top:0,behavior:'smooth'})}}>
               <Icon size={21}/><span className="pr-nav-name">{dual(item.title)}</span>
             </button>;
@@ -181,34 +199,28 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
         <div className="pr-present-sidebar-footer">
           <div className="pr-present-toolbar" role="group" aria-label={t('Sprache','Язык')}>
             {(['de','ru','bilingual'] as Language[]).map(code=><button type="button" key={code} onClick={()=>onLanguageChange(code)}
-              aria-pressed={language===code}>{code==='bilingual'?'DE+RU':code.toUpperCase()}</button>)}
+              title={sidebarCollapsed ? (code === 'bilingual' ? 'DE+RU' : code.toUpperCase()) : undefined}
+              aria-pressed={language===code}>{sidebarCollapsed && code === 'bilingual' ? '2' : code === 'bilingual' ? 'DE+RU' : code.toUpperCase()}</button>)}
           </div>
-          <p className="pr-present-secondary">
+          <p className="pr-present-secondary" title={saveState==='loading'?t('Lade Daten','Загрузка'):saveState==='saving'?t('Speichert lokal','Сохранение'):saveState==='saved'?t('Lokal gesichert','Сохранено локально'):saveState==='error'?t('Speicherfehler','Ошибка сохранения'):t('Notizen lokal','Локальные заметки')}>
             {saveState==='saving'?<Save size={16}/>:saveState==='error'?<ShieldAlert size={16}/>:<CheckCircle2 size={16}/>}
-            {saveState==='loading'?t('Lade Daten','Загрузка'):saveState==='saving'?t('Speichert lokal','Сохранение'):saveState==='saved'?t('Lokal gesichert','Сохранено локально'):saveState==='error'?t('Speicherfehler','Ошибка сохранения'):t('Notizen lokal','Локальные заметки')}
+            <span className="pr-footer-label">{saveState==='loading'?t('Lade Daten','Загрузка'):saveState==='saving'?t('Speichert lokal','Сохранение'):saveState==='saved'?t('Lokal gesichert','Сохранено локально'):saveState==='error'?t('Speicherfehler','Ошибка сохранения'):t('Notizen lokal','Локальные заметки')}</span>
           </p>
-          {!standalone && <button className="pr-present-secondary text-left" type="button" onClick={()=>void leaveSafely(onOpenSenior)}>
-            <BookOpenCheck size={16}/>{t('Senior-Präsentation','Презентация сеньора')}
-          </button>}
-          <button className="pr-present-secondary text-left" type="button" onClick={()=>void exportFile('md')} disabled={saveState==='loading'}>
-            <Download size={16}/>{t('Protokoll sichern','Скачать протокол')}
+          <button className="pr-present-secondary text-left" type="button" title={t('Senior-Präsentation','Презентация сеньора')} onClick={()=>void leaveSafely(onOpenSenior)}>
+            <BookOpenCheck size={16}/><span className="pr-footer-label">{t('Senior-Präsentation','Презентация сеньора')}</span>
           </button>
-          {!standalone && <button className="pr-present-secondary text-left" type="button" onClick={()=>void leaveSafely(onExit)}>
-            <ArrowLeft size={16}/>{t('Präsentation verlassen','Выйти из презентации')}
-          </button>}
+          <button className="pr-present-secondary text-left" type="button" title={t('Protokoll sichern','Скачать протокол')} onClick={()=>void exportFile('md')} disabled={saveState==='loading'}>
+            <Download size={16}/><span className="pr-footer-label">{t('Protokoll sichern','Скачать протокол')}</span>
+          </button>
+          <button className="pr-present-secondary text-left" type="button" title={t('Präsentation verlassen','Выйти из презентации')} onClick={()=>void leaveSafely(onExit)}>
+            <ArrowLeft size={16}/><span className="pr-footer-label">{t('Präsentation verlassen','Выйти из презентации')}</span>
+          </button>
         </div>
       </aside>
         <main className="pr-present-main">
           <h1 className="sr-only">{t('Kunden-Onboarding · 31.10.2026','Онбординг заказчика · 31.10.2026')}</h1>
           <section className={station.id==='project'?'pr-project-section':'pr-other-section'}>
-            {station.id==='project'?
-              <div className="pr-project-head">
-                <div className="min-w-0"><p className="pr-eyebrow">{t('PROJEKT ISA','ПРОЕКТ ИСЫ')}</p>
-                  <h2>{dual(station.title)}</h2>
-                  <p className="pr-project-subtitle">{dual(station.purpose)}</p>
-                </div>
-                <div className="pr-project-claim">{t('Gemeinsam von Idee zu Wirkung.','Вместе от идеи к результату.')}</div>
-              </div>
+            {station.id==='project'? null
               :<div className="pr-other-head">
                 <p className="pr-eyebrow">{station.id==='finish'?t('ABSCHLUSS','ЗАВЕРШЕНИЕ'):t('STATION','ЭТАП')+' '+(stationIndex+1)+' / '+ONBOARDING_WORK_STATION_COUNT}</p>
                 <h2>{dual(station.title)}</h2>
@@ -216,7 +228,46 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
               </div>}
 
           {station.id==='hub' && <div className="p-5 md:p-7 space-y-6" data-testid="onboarding-hub-visual">
-            <ProRivHubCenter language={language} />
+            <TelegramProjectChannel language={language} />
+
+            {/* ProRiv Hub - Ausklappbares Akkordeon wie vom Nutzer gewünscht */}
+            <details
+              data-testid="onboarding-hub-accordion"
+              className="group rounded-3xl border border-white/[0.18] bg-[#161F2C]/75 backdrop-blur-xl shadow-2xl overflow-hidden transition-all shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18)]"
+            >
+              <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-4 p-5 sm:px-7 sm:py-5 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#F1F0EE] transition-colors">
+                <div className="flex items-center gap-4">
+                  <span className="p-3 rounded-2xl bg-[#243347] text-[#e3bb6b] border border-[#e3bb6b]/30 shadow-md">
+                    <LayoutGrid className="w-6 h-6" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="text-base font-bold text-white tracking-tight">
+                        {t('ProRiv Hub – Erweiterte Projekt- & Testplattform', 'ProRiv Hub — расширенная платформа проекта и тестов')}
+                      </span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e3bb6b]/15 text-[#f4d38c] border border-[#e3bb6b]/35">
+                        {t('Hier klicken zum Auseinanderklappen', 'Нажмите, чтобы развернуть')}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#CBD5E1] mt-1 leading-relaxed">
+                      {t(
+                        'Kunden- und Entwickleransicht, Feature-Karten, Rollenumschalter und echter Hub-Zugang.',
+                        'Обзор для заказчика и разработчиков, карточки функций, переключение ролей и вход в Hub.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-semibold text-white bg-white/10 px-3.5 py-2 rounded-xl border border-white/15 group-hover:border-white/35 transition-colors shrink-0">
+                  <span className="hidden sm:inline group-open:hidden">{t('Hub auseinanderklappen', 'Развернуть Hub')}</span>
+                  <span className="hidden sm:inline hidden group-open:inline">{t('Zuklappen', 'Свернуть')}</span>
+                  <ChevronDown className="w-4 h-4 transition-transform duration-200 group-open:rotate-180" />
+                </div>
+              </summary>
+              <div className="p-5 md:p-7 border-t border-white/[0.14] bg-[#101928]/85 space-y-6">
+                <ProRivHubCenter language={language} />
+              </div>
+            </details>
+
             <details data-testid="onboarding-team-accordion" className="group rounded-3xl border border-white/[0.18] bg-[#161F2C]/75 backdrop-blur-xl shadow-2xl overflow-hidden transition-all shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18)]">
               <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-3 p-4 sm:px-6 sm:py-5 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#F1F0EE] transition-colors">
                 <div className="flex items-center gap-3.5">
@@ -258,7 +309,6 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
                     </div>
                     <span className="text-sm font-bold text-white tracking-tight">{t('Hasin', 'Хьасин')}</span>
                     {bilingual && <span className="text-xs font-medium text-[#CBD5E1] mt-0.5">Хьасин</span>}
-                    <span className="text-[11px] font-medium text-[#CBD5E1] mt-1">{t('Architektur & Umsetzung', 'Архитектура и разработка')}</span>
                   </div>
 
                   {/* Ismail */}
@@ -275,7 +325,6 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
                     </div>
                     <span className="text-sm font-bold text-white tracking-tight">{t('Ismail', 'Исмаил')}</span>
                     {bilingual && <span className="text-xs font-medium text-[#CBD5E1] mt-0.5">Исмаил</span>}
-                    <span className="text-[11px] font-medium text-[#CBD5E1] mt-1">{t('Frontend & UI-Design', 'Фронтенд и дизайн')}</span>
                   </div>
 
                   {/* Amruddy */}
@@ -290,7 +339,6 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
                     </div>
                     <span className="text-sm font-bold text-white tracking-tight">{t('Amruddy', 'Амрудди')}</span>
                     {bilingual && <span className="text-xs font-medium text-[#CBD5E1] mt-0.5">Амрудди</span>}
-                    <span className="text-[11px] font-medium text-[#CBD5E1] mt-1">{t('Integration & Logik', 'Интеграция и логика')}</span>
                   </div>
                 </div>
 
@@ -300,23 +348,8 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
               </div>
             </details>
           </div>}
-          {station.id==='project' ? <div data-testid="onboarding-project-visual">
+          {station.id==='project' && <div data-testid="onboarding-project-visual">
             <ProRivProjectRoadmapPremium language={language} answers={Object.fromEntries(Object.entries(state.answers).map(([id,a])=>[id,a.answer]))} onAnswerChange={(id,answer)=>changeAnswer(id,{answer})} disabled={saveState==='loading'}/>
-
-          </div> : (station.id==='hub'||station.id==='finish') ? null :
-          <div className="p-5 md:p-6">
-            <h3 className="uppercase text-[10px] text-[#CBD5E1] font-bold tracking-[0.2em] mb-3">{t('Was wir erklären','Что мы объясняем')}</h3>
-            <div className="grid md:grid-cols-2 gap-3">
-              {station.points.map(point=><div key={point.id} className={'border border-white/[0.16] rounded-2xl p-4 bg-[#141C26]/80 backdrop-blur-md text-[#EEF0F2]'}>
-                <div className="text-[10px] uppercase tracking-wider font-bold opacity-80 mb-2 text-[#CBD5E1]">
-                  {point.evidence==='canon'?t('Kanonische Grundlage','Основа по канону'):
-                    point.evidence==='team'?t('Teamplan · nicht bestätigt','План команды · не подтверждён'):
-                    t('Noch offen','Открытый вопрос')}
-                </div>
-                <p className="text-sm leading-relaxed font-semibold text-white">{dual(point.text)}</p>
-                <p className="text-[10px] opacity-75 mt-2 text-[#94A3B8]">{point.source}</p>
-              </div>)}
-            </div>
           </div>}
         </section>
 
@@ -334,41 +367,6 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
           </div>
         </details>}
 
-        {/* Section 2: Question and meeting notes - Luminous & high contrast */}
-        {station.id!=='project' && station.questions.length>0 && <section className="rounded-3xl border border-white/[0.18] bg-[#161F2C]/75 backdrop-blur-xl shadow-2xl p-5 md:p-7 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18)]">
-          <div className="flex items-start justify-between gap-3 mb-5">
-            <div>
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-[#F1F0EE]"/>
-                {t('Fragen und Gesprächsnotizen','Вопросы и заметки')}
-              </h3>
-              <p className="text-xs text-[#CBD5E1] mt-1">{t('Antworten direkt während des Gesprächs festhalten. Keine zusätzlichen Status- oder Terminformulare.', 'Записывайте ответы прямо во время встречи, без лишних статусов и форм.')}</p>
-            </div>
-            <span className="text-xs text-white bg-white/10 border border-white/20 rounded-full px-3 py-1 font-bold shrink-0">
-              {station.questions.length} {t('Fragen','вопросов')}
-            </span>
-          </div>
-          <div className="space-y-3.5">
-            {station.questions.map((q,i)=>{
-              const a=state.answers[q.id]||emptyAnswer();
-              return <div key={q.id} className="border border-white/[0.16] rounded-2xl bg-[#141C26]/80 backdrop-blur-md p-4 sm:p-5 hover:border-white/30 transition-all">
-                <label className="block text-sm font-semibold text-white">
-                  <span className="text-[#94A3B8] font-mono mr-2">{String(i+1).padStart(2,'0')}</span>{dual(q.prompt)}
-                  <textarea rows={2} value={a.answer} maxLength={10000}
-                    placeholder={t('Antwort aus dem Gespräch …','Ответ со встречи …')}
-                    disabled={saveState==='loading'} onChange={e=>changeAnswer(q.id,{answer:e.target.value})}
-                    className="block mt-3 w-full min-h-[75px] p-3.5 rounded-xl border border-white/20 bg-[#1E2837]/90 text-white placeholder:text-[#64748B] text-sm font-normal resize-y focus:bg-[#243142] focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/60 transition-all"/>
-                </label>
-                <label className="block mt-3 max-w-sm text-xs font-medium text-[#CBD5E1]">{t('Verantwortlicher (optional)','Ответственный (необязательно)')}
-                  <input value={a.owner} onChange={e=>changeAnswer(q.id,{owner:e.target.value})}
-                    placeholder={t('Name bei Bedarf','Имя при необходимости')}
-                    className="block mt-1 p-2.5 w-full rounded-xl bg-[#1E2837]/90 border border-white/20 text-white placeholder:text-[#64748B] text-sm font-normal focus:bg-[#243142] focus:outline-none focus:ring-2 focus:ring-white/50"/>
-                </label>
-              </div>;
-            })}
-          </div>
-        </section>}
-
         {station.id==='accounts' && <section className="rounded-3xl border border-white/[0.18] bg-[#161F2C]/75 backdrop-blur-xl shadow-2xl p-5 md:p-7 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18)]">
           <div className="flex items-center gap-2.5 pb-2 border-b border-white/10 mb-4">
             <span className="p-2 rounded-xl bg-white/10 border border-white/15 text-white">
@@ -376,45 +374,21 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
             </span>
             <div>
               <h3 className="text-lg font-bold text-white">{t('Konten und Zuständigkeiten','Аккаунты и ответственные')}</h3>
-              <p className="text-xs text-amber-300 font-medium mt-0.5">{t('Keine Passwörter, API-Schlüssel, Tokens oder Recovery-Codes hier eintragen.','Не вводите сюда пароли, API-ключи, токены и коды восстановления.')}</p>
+              <p className="text-xs text-[#CBD5E1] font-medium mt-0.5">{t('Übersicht der erforderlichen Plattformkonten für das Projekt. Keine Passwörter oder Zugangsdaten eingeben.','Обзор необходимых платформенных аккаунтов для проекта. Не вводите пароли и учетные данные.')}</p>
             </div>
           </div>
           <div className="space-y-4">
-            {ACCOUNT_TYPES.map(account=>{
-              const a=state.accounts[account.id]||emptyAccount();
-              return <div key={account.id} className="border border-white/[0.16] rounded-2xl p-5 space-y-3.5 bg-[#141C26]/80 backdrop-blur-md">
+            {ACCOUNT_TYPES.map(account=>(
+              <div key={account.id} className="border border-white/[0.16] rounded-2xl p-5 bg-[#141C26]/80 backdrop-blur-md">
                 <div>
-                  <h4 className="font-bold text-sm text-white flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F1F0EE]" />
+                  <h4 className="font-bold text-base text-white flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#e3bb6b]" />
                     {account.name}
                   </h4>
-                  <p className="text-xs text-[#CBD5E1] mt-1 leading-relaxed">{dual(account.reason)}</p>
+                  <p className="text-xs sm:text-sm text-[#CBD5E1] mt-1.5 leading-relaxed">{dual(account.reason)}</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <label className="text-xs font-semibold text-[#CBD5E1]">{t('Bereits vorhanden?','Уже есть?')}
-                    <select value={a.exists} onChange={e=>changeAccount(account.id,{exists:e.target.value as OnboardingAccount['exists']})}
-                      className="block mt-1 p-2.5 w-full border border-white/20 rounded-xl bg-[#1E2837]/90 text-white font-normal text-sm focus:outline-none focus:ring-2 focus:ring-white/50">
-                      <option value="unknown" className="bg-[#10141A] text-white">{t('Noch ungeklärt','Неизвестно')}</option>
-                      <option value="yes" className="bg-[#10141A] text-white">{t('Ja','Да')}</option>
-                      <option value="no" className="bg-[#10141A] text-white">{t('Nein','Нет')}</option>
-                    </select>
-                  </label>
-                  {([
-                    ['owner',t('Eigentümer','Владелец')],
-                    ['setupBy',t('Wer richtet es ein?','Кто настраивает?')],
-                    ['access',t('Wer braucht Zugriff?','Кому нужен доступ?')],
-                    ['followUp',t('Offene Aufgabe','Следующее действие')]
-                  ] as const).map(([key,label])=><label key={key} className={'text-xs font-semibold text-[#CBD5E1] '+(key==='followUp'?'md:col-span-2':'')}>
-                    {label}<input value={a[key]} onChange={e=>changeAccount(account.id,{[key]:e.target.value})}
-                      placeholder="—" className="block mt-1 p-2.5 w-full border border-white/20 rounded-xl bg-[#1E2837]/90 text-white font-normal text-sm placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-white/50"/>
-                  </label>)}
-                  <label className="text-xs font-semibold text-[#CBD5E1]">{t('Frist','Срок')}
-                    <input type="date" value={a.dueDate} onChange={e=>changeAccount(account.id,{dueDate:e.target.value})}
-                      className="block mt-1 p-2.5 w-full border border-white/20 rounded-xl bg-[#1E2837]/90 text-white font-normal text-sm focus:outline-none focus:ring-2 focus:ring-white/50"/>
-                  </label>
-                </div>
-              </div>;
-            })}
+              </div>
+            ))}
           </div>
         </section>}
 
@@ -456,11 +430,9 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
           </label>
           <div className="border-t border-white/10 pt-4">
             <p className="text-sm font-bold text-[#EEF0F2] mb-1">{t('Unbedingt vor Verlassen exportieren','Обязательно скачать перед завершением')}</p>
-            <p className="text-xs text-[#B8BCC1] mb-3">{t('Notizen werden ausschließlich in diesem Browser gespeichert. Für die Sitzung Protokoll und vollständiges Backup herunterladen.','Заметки хранятся только в этом браузере. Скачайте протокол и полную резервную копию.')}</p>
+            <p className="text-xs text-[#B8BCC1] mb-3">{t('Notizen werden ausschließlich in diesem Browser gespeichert. Vor dem Verlassen das Protokoll als .md-Datei herunterladen.','Заметки хранятся только в этом браузере. Перед выходом скачайте протокол (.md).')}</p>
             <div className="flex flex-wrap gap-2.5">
-              <button onClick={()=>void exportFile('md')} className="px-4 py-2.5 bg-[#F1F0EE] hover:bg-white text-[#10141A] rounded-xl text-xs font-semibold flex items-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.3)] border border-white/60 transition-all"><FileText className="w-4 h-4"/>{t('Protokoll (.md)','Протокол (.md)')}</button>
-              <button onClick={()=>void exportFile('all')} className="px-4 py-2.5 bg-[#232830] hover:bg-[#2c333e] border border-white/15 text-[#EEF0F2] rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"><CloudDownload className="w-4 h-4"/>{t('Vollständiges JSON-Backup','Полная копия JSON')}</button>
-              <button onClick={()=>void exportFile('json')} className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/15 text-[#EEF0F2] rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"><FileJson className="w-4 h-4"/>{t('Nur Onboarding-JSON','Только JSON онбординга')}</button>
+              <button onClick={()=>void exportFile('md')} className="px-4 py-2.5 bg-[#F1F0EE] hover:bg-white text-[#10141A] rounded-xl text-xs font-semibold flex items-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.3)] border border-white/60 transition-all"><FileText className="w-4 h-4"/>{t('Protokoll (.md) herunterladen','Скачать протокол (.md)')}</button>
             </div>
             {downloadError&&<p role="alert" className="text-xs text-rose-400 mt-3">{downloadError}</p>}
           </div>
@@ -468,7 +440,27 @@ export const CustomerOnboarding:React.FC<Props> = ({language,onLanguageChange,on
 
         <nav className="flex items-center justify-between gap-3 pb-3" aria-label={t('Station wechseln','Сменить этап')}>
           <button onClick={()=>next(-1)} disabled={stationIndex===0} className="border border-white/15 disabled:opacity-30 rounded-2xl bg-[#1D232B]/70 backdrop-blur-md hover:bg-white/10 px-5 py-3 text-sm text-[#EEF0F2] flex items-center gap-2 transition-all"><ArrowLeft className="w-4 h-4"/>{t('Zurück','Назад')}</button>
-          <span className="text-xs text-[#B8BCC1] font-medium">{station.id==='finish'?t('Abschluss','Итоги'):(stationIndex+1)+' / '+ONBOARDING_WORK_STATION_COUNT}</span>
+          
+          <div className="flex items-center gap-3 bg-[#141C26]/90 backdrop-blur-md border border-white/18 px-4 py-2 rounded-2xl shadow-xl">
+            <span className="text-xs text-[#CBD5E1] font-semibold">{station.id==='finish'?t('Abschluss','Итоги'):(stationIndex+1)+' / '+ONBOARDING_WORK_STATION_COUNT}</span>
+            {sidebarCollapsed && (
+              <>
+                <span className="w-px h-3.5 bg-white/20" aria-hidden="true" />
+                <button
+                  type="button"
+                  onClick={() => setSidebarCollapsed(false)}
+                  className="flex items-center gap-1.5 text-xs text-[#e3bb6b] hover:text-white font-semibold transition-colors focus-visible:outline-none"
+                  title={t('Seitenleiste einblenden', 'Показать панель')}
+                  aria-label={t('Seitenleiste einblenden', 'Показать панель')}
+                  data-testid="show-sidebar-bottom"
+                >
+                  <PanelLeftOpen className="w-3.5 h-3.5" />
+                  <span>{t('Seitenleiste', 'Панель')}</span>
+                </button>
+              </>
+            )}
+          </div>
+
           {stationIndex<ONBOARDING_STATIONS.length-1?<button onClick={()=>next(1)} className="rounded-2xl bg-[#F1F0EE] hover:bg-white text-[#10141A] px-6 py-3 text-sm font-bold flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.4)] border border-white/60 transition-all">
             {t('Nächste Station','Следующий этап')}<ArrowRight className="w-4 h-4"/>
           </button>:
