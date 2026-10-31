@@ -1,2 +1,417 @@
-@import 'tailwindcss';
-body { background: #101928; margin: 0; }
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  summary,
+  select,
+  label:has(input[type="checkbox"]),
+  label:has(input[type="radio"]) {
+    cursor: pointer;
+  }
+
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]) {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  button:not(:disabled):not([aria-disabled="true"]):hover,
+  [role="button"]:not([aria-disabled="true"]):hover {
+    cursor: pointer;
+  }
+
+  button:not(:disabled):not([aria-disabled="true"]):active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: scale(0.98) translateY(1px);
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled {
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+.role-map-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 20px; background: radial-gradient(circle, #cbd5e140 1px, transparent 1px) 0 0 / 24px 24px; }
+.role-map-root { text-align: center; min-width: 0; }
+.role-map-arms { display: none; }
+.role-map-node { min-width: 0; padding: 14px 10px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; text-align: center; box-shadow: 0 3px 12px #0f172a05; transition: border-color .16s, box-shadow .16s; }
+.role-map-node:hover, .role-map-node.is-active { border-color: #818cf8; box-shadow: 0 0 0 2px #eef2ff; }
+.role-map-node:focus-visible { outline: 2px solid #4f46e5; outline-offset: 3px; }
+.role-map-node.is-active { background: #fafaff; }
+.role-map-details { scroll-margin-top: 24px; }
+.role-knowledge-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 6px; padding: 4px 7px; font-size: 10px; font-weight: 600; line-height: 1.4; }
+.role-knowledge-badge.role-state-evidenced { color: #166534; background: #dcfce7; }
+.role-knowledge-badge.role-state-proposal { color: #9a3412; background: #ffedd5; }
+.role-knowledge-badge.role-state-open { color: #9f1239; background: #ffe4e6; }
+.role-knowledge-item { border: 1px solid; border-left-width: 4px; border-radius: 12px; padding: 16px; min-width: 0; }
+.role-knowledge-item.role-state-evidenced { border-color: #bbf7d0; border-left-color: #22c55e; background: #f0fdf980; }
+.role-knowledge-item.role-state-proposal { border-color: #fed7aa; border-left-color: #f97316; background: #fff7ed80; }
+.role-knowledge-item.role-state-open { border-color: #fecdd3; border-left-color: #f43f5e; background: #fff1f280; }
+.role-count { display: inline-flex; align-items: center; gap: 3px; }
+.role-count.role-state-evidenced { color: #166534; }
+.role-count.role-state-proposal { color: #9a3412; }
+.role-count.role-state-open { color: #9f1239; }
+.role-status-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+:root {
+  --spring-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --spring-dur: 0.64s;
+
+  /* D.T. UI DNA Cinematic Luminous Glass V1.0 Tokens */
+  --dt-bg-deep: #10141a;
+  --dt-bg-mid: #1d232b;
+  --dt-graphite: #353a42;
+  --dt-pearl: #f1f0ee;
+  --dt-text: #eef0f2;
+  --dt-text-muted: #b8bcc1;
+  --dt-slate-undertone: #56616f;
+  --dt-light-warm: #e8c9a2;
+  --dt-glass-fill: rgba(20, 24, 31, 0.76);
+  --dt-glass-border: rgba(241, 240, 238, 0.14);
+  --dt-glass-blur: 24px;
+}
+
+.dt-luminous-card {
+  background: var(--dt-glass-fill);
+  border: 1px solid var(--dt-glass-border);
+  box-shadow: inset 0 1px 0 0 rgba(241, 240, 238, 0.18), 0 20px 40px -12px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(var(--dt-glass-blur));
+  -webkit-backdrop-filter: blur(var(--dt-glass-blur));
+}
+
+.dt-luminous-card-active {
+  background: rgba(29, 35, 43, 0.88);
+  border: 1px solid rgba(241, 240, 238, 0.42);
+  box-shadow: inset 0 1px 1px 0 rgba(241, 240, 238, 0.32), 0 12px 32px -6px rgba(0, 0, 0, 0.6);
+}
+
+.dt-pearl-btn {
+  background: #f1f0ee;
+  color: #10141a;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dt-pearl-btn:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(241, 240, 238, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.dt-graphite-track {
+  background: #232830;
+  border: 1px solid rgba(241, 240, 238, 0.12);
+}
+
+@media (min-width: 540px) and (max-width: 767px) {
+  .role-map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .role-map-root, .role-map-node-questions { grid-column: 1 / -1; }
+}
+@media (min-width: 768px) {
+  .role-map-grid {
+    position: relative;
+    display: block;
+    height: 680px;
+    padding: 0;
+    transition: height var(--spring-dur) var(--spring-ease);
+    contain: layout;
+  }
+  .role-map-arms {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .role-map-arms path {
+    stroke-dasharray: 1;
+    animation: role-arm-open .45s ease-out both;
+  }
+  .role-map-root {
+    position: absolute;
+    left: 50%;
+    top: 49%;
+    width: 170px;
+    transform: translate(-50%, -50%);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: left var(--spring-dur) var(--spring-ease),
+                top var(--spring-dur) var(--spring-ease),
+                transform var(--spring-dur) var(--spring-ease),
+                opacity 0.4s ease;
+    will-change: left, top, transform, opacity;
+  }
+  .role-map-node {
+    position: absolute;
+    width: 228px;
+    max-width: 240px;
+    transform: translate(-50%, -50%);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    animation: role-node-open .4s ease-out both;
+    transition: left var(--spring-dur) var(--spring-ease),
+                top var(--spring-dur) var(--spring-ease),
+                transform var(--spring-dur) var(--spring-ease),
+                opacity 0.4s ease,
+                box-shadow 0.38s ease,
+                border-color 0.38s ease,
+                background-color 0.38s ease;
+    will-change: left, top, transform, opacity;
+  }
+  .role-map-node-rights { left: 20%; top: 22%; }
+  .role-map-node-duties { left: 80%; top: 22%; }
+  .role-map-node-flow { left: 20%; top: 71%; }
+  .role-map-node-handoffs { left: 80%; top: 71%; }
+  .role-map-node-questions { left: 50%; top: 84%; }
+}
+
+@media (min-width: 1024px) {
+  .role-map-grid.is-rights-expanded,
+  .role-map-grid.is-flow-expanded {
+    height: 820px;
+  }
+
+  .role-map-grid.is-rights-expanded .role-map-root,
+  .role-map-grid.is-flow-expanded .role-map-root {
+    left: 67%;
+    top: 48%;
+    transform: translate(-50%, -50%) scale(0.82);
+    opacity: 0.62;
+  }
+  .role-map-grid.is-rights-expanded .role-map-root:hover,
+  .role-map-grid.is-flow-expanded .role-map-root:hover {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.86);
+  }
+
+  .role-map-grid.is-rights-expanded .role-map-node-rights {
+    left: 41%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    border-color: #6366f1;
+    background: #fafaff;
+    box-shadow: 0 0 0 2px #e0e7ff, 0 14px 34px #4f46e522;
+    opacity: 1;
+    z-index: 25;
+  }
+  .role-map-grid.is-rights-expanded .role-map-node-duties {
+    left: 86%;
+    top: 22%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  .role-map-grid.is-rights-expanded .role-map-node-handoffs {
+    left: 86%;
+    top: 73%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  .role-map-grid.is-rights-expanded .role-map-node-questions {
+    left: 67%;
+    top: 86%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  .role-map-grid.is-rights-expanded .role-map-node-flow {
+    left: 48%;
+    top: 78%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+
+  .role-map-grid.is-flow-expanded .role-map-node-flow {
+    left: 41%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    border-color: #6366f1;
+    background: #fafaff;
+    box-shadow: 0 0 0 2px #e0e7ff, 0 14px 34px #4f46e522;
+    opacity: 1;
+    z-index: 25;
+  }
+  .role-map-grid.is-flow-expanded .role-map-node-rights {
+    left: 48%;
+    top: 78%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  .role-map-grid.is-flow-expanded .role-map-node-duties {
+    left: 86%;
+    top: 22%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  .role-map-grid.is-flow-expanded .role-map-node-handoffs {
+    left: 86%;
+    top: 73%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  .role-map-grid.is-flow-expanded .role-map-node-questions {
+    left: 67%;
+    top: 86%;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+
+  .role-subarms-desktop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .role-satellite-card-desktop {
+    position: absolute;
+    width: 236px;
+    pointer-events: auto;
+    transform-origin: center center;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: transform 0.48s var(--spring-ease),
+                opacity 0.38s ease,
+                box-shadow 0.38s ease,
+                border-color 0.38s ease,
+                background-color 0.38s ease,
+                padding 0.35s ease;
+    animation: orbit-fan-out var(--spring-dur) var(--spring-ease) backwards;
+    will-change: transform, opacity;
+  }
+}
+
+/* Inactive main cards in expanded mode */
+.role-map-node {
+  transition: left var(--spring-dur) var(--spring-ease),
+              top var(--spring-dur) var(--spring-ease),
+              transform var(--spring-dur) var(--spring-ease),
+              opacity 0.4s ease,
+              box-shadow 0.38s ease,
+              border-color 0.38s ease,
+              background-color 0.38s ease;
+  will-change: left, top, transform, opacity;
+}
+.role-node-details {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.4s var(--spring-ease), opacity 0.3s ease;
+}
+.role-node-details > div {
+  overflow: hidden;
+}
+.role-map-node.is-inactive-main {
+  opacity: 0.52;
+  cursor: pointer;
+}
+.role-map-node.is-inactive-main:hover {
+  opacity: 0.95 !important;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.18);
+}
+.role-map-node.is-inactive-main .role-node-details {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Orbit Satellite Cards: Capsule glass styling */
+.role-satellite-card {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  padding: 8px 12px;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  transition: transform 0.48s var(--spring-ease),
+              opacity 0.38s ease,
+              box-shadow 0.38s ease,
+              border-color 0.38s ease,
+              background-color 0.38s ease,
+              padding 0.3s ease;
+}
+.role-satellite-card.is-hovered {
+  background: rgba(255, 255, 255, 0.98);
+  padding: 12px 14px;
+  box-shadow: 0 20px 40px -6px rgba(79, 70, 229, 0.22), 0 10px 18px -4px rgba(15, 23, 42, 0.06);
+}
+.role-satellite-card.role-state-evidenced {
+  border-color: rgba(187, 247, 208, 0.85);
+}
+.role-satellite-card.role-state-evidenced.is-hovered {
+  border-color: rgba(74, 222, 128, 0.9);
+  box-shadow: 0 20px 40px -6px rgba(34, 197, 94, 0.2), 0 10px 18px -4px rgba(15, 23, 42, 0.06);
+}
+.role-satellite-card.role-state-proposal {
+  border-color: rgba(254, 215, 170, 0.85);
+}
+.role-satellite-card.role-state-proposal.is-hovered {
+  border-color: rgba(251, 146, 60, 0.9);
+  box-shadow: 0 20px 40px -6px rgba(249, 115, 22, 0.2), 0 10px 18px -4px rgba(15, 23, 42, 0.06);
+}
+.role-satellite-card.role-state-open {
+  border-color: rgba(254, 205, 211, 0.85);
+}
+.role-satellite-card.role-state-open.is-hovered {
+  border-color: rgba(251, 113, 133, 0.9);
+  box-shadow: 0 20px 40px -6px rgba(244, 63, 94, 0.2), 0 10px 18px -4px rgba(15, 23, 42, 0.06);
+}
+
+/* Bullet details reveal on hover with CSS grid */
+.role-satellite-card-desktop .role-satellite-details {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: grid-template-rows 0.38s var(--spring-ease),
+              opacity 0.28s ease,
+              transform 0.28s ease;
+}
+.role-satellite-card-desktop.is-hovered .role-satellite-details {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+}
+.role-satellite-card-desktop .role-satellite-details > div {
+  overflow: hidden;
+}
+
+@keyframes orbit-fan-out {
+  0% {
+    transform: translate(var(--fan-from-x, 0px), var(--fan-from-y, 0px)) scale(0.35);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.98;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes beam-draw {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.95;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes role-arm-open { from { stroke-dashoffset: 1; opacity: 0; } to { stroke-dashoffset: 0; opacity: 1; } }
+@keyframes role-node-open { from { opacity: 0; transform: translate(-50%, -50%) scale(.85); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .role-map-arms path, .role-map-node, .role-satellite-card-desktop { animation: none !important; transition: none !important; }
+}
+
+
+
+
