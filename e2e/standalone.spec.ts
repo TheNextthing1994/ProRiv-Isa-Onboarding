@@ -24,6 +24,7 @@ test('answers remain local through reload and language change', async ({ page })
   await page.getByRole('button', { name: /Wer koordiniert die Kundentests/ }).click();
   await page.getByTestId('onboarding-test-owner').fill('Testkoordinator');
   await page.getByRole('button', { name: 'Fertig' }).click();
+  await expect(page.getByText('Lokal gesichert')).toBeVisible({ timeout: 12000 });
   await page.reload();
   await page.getByRole('button', { name: /Wer koordiniert die Kundentests/ }).click();
   await expect(page.getByTestId('onboarding-test-owner')).toHaveValue('Testkoordinator');
